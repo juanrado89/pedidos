@@ -4,7 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.antlr.v4.runtime.misc.NotNull;
+import jakarta.validation.constraints.NotNull;
+import rado.alberto.org.variables.ProductCategory;
 
 @Getter
 @Setter
@@ -17,20 +18,19 @@ public class Product {
     private Long id;
 
     @NotNull
-    @Size(min = 0,max = 120)
+    @Size(max = 120)
     @Basic
     @Column(name = "name", nullable = false)
     private String name;
 
     @NotNull
-    @Size(min = 0,max = 3000)
+    @Size(max = 3000)
     @Basic
     @Column(name = "description", nullable = false)
     private String description;
 
-    @NotNull
     @Basic
-    @Column(name = "image", nullable = true)
+    @Column(name = "image")
     private String image;
 
     @NotNull
@@ -39,27 +39,26 @@ public class Product {
     private String sku;
 
     @NotNull
-    @Size(min = 0,max = 100)
+    @Size(max = 100)
     @Basic
     @Column(name = "price", nullable = false)
     private String price;
 
     @NotNull
-    @Size(min = 0,max = 80)
+    @Size(max = 80)
     @Basic
-    @Column(name = "category", nullable = true)
-    private String category;
+    @Column(name = "category", nullable = false)
+    private ProductCategory category;
 
     @NotNull
-    @Size(min = 0,max = 10)
+    @Size(max = 10)
     @Basic
-    @Column(name = "stock", nullable = true)
+    @Column(name = "stock", nullable = false)
     private String stock;
 
-    @NotNull
-    @Size(min = 0,max = 4)
+    @Size(max = 4)
     @Basic
-    @Column(name = "discount", nullable = true)
+    @Column(name = "discount")
     private String discount;
 
     @Override
@@ -77,15 +76,19 @@ public class Product {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Product{");
-        sb.append("id=").append(id);
-        sb.append(", name='").append(name).append('\'');
-        sb.append(", description='").append(description).append('\'');
-        sb.append(", image='").append(image).append('\'');
-        sb.append(", sku='").append(sku).append('\'');
-        sb.append(", price='").append(price).append('\'');
-        sb.append(", category='").append(category).append('\'');
-        sb.append(", stock='").append(stock).append('\'');
-        sb.append(", discount='").append(discount).append('\'');
+        sb.append("id = ").append(id);
+        sb.append("\nname = ").append(name);
+        sb.append("\ndescription = ").append(description);
+        if(this.image != null && !this.image.isEmpty() && !this.image.isBlank()){
+            sb.append("\nimage = ").append(image);
+        }
+        sb.append("\nsku = ").append(sku);
+        sb.append("\nprice = ").append(price);
+        sb.append("\ncategory = ").append(category);
+        sb.append("\nstock = ").append(stock);
+        if(this.discount != null && !this.discount.isEmpty() && !this.discount.isBlank()){
+            sb.append("\ndiscount = ").append(discount);
+        }
         sb.append('}');
         return sb.toString();
     }
