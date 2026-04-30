@@ -69,6 +69,10 @@ public class Address {
     @Column(name = "door",nullable = false)
     private String door;
 
+    @ManyToOne
+    @JoinColumn(name = "id_customer")
+    private Customer customer;
+
     @Override
     public int hashCode() {
         return getClass().hashCode();

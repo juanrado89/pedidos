@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -34,10 +36,13 @@ public class Customer {
     private String lastName;
 
     @NotNull
-    @Size(max = 80)
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_address")
-    private Address address;
+    @OneToMany(mappedBy = "address", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "addresses")
+    private List<Address> addresses;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "orders")
+    private List<Order> orders;
 
 
     @Size(max = 14)
@@ -76,7 +81,11 @@ public class Customer {
         sb.append("id = ").append(id);
         sb.append("\nname = ").append(name);
         sb.append("\nlastName = ").append(lastName);
-        sb.append("\naddress = ").append(address);
+        int count = 1;
+        for (Address address : addresses) {
+            sb.append("\naddress nº ").append(count).append(" = ").append(address.toString());
+            count++;
+        }
         if(this.telephone != -1){
             sb.append("\ntelephone = ").append(telephone);
         }

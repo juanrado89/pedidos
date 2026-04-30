@@ -7,11 +7,28 @@ import java.util.List;
 
 public class PricingCalculator {
 
-    public static BigDecimal priceCalculator(List<OrderItem> orderItems) {
-        BigDecimal totalAmount = BigDecimal.ZERO;
-        for (OrderItem orderItem : orderItems) {
-            totalAmount = totalAmount.add(orderItem.getTotalPrice());
+    private PricingCalculator() {
+
+    }
+    public static BigDecimal CalculateTotalPrice(List<OrderItem> orderItems) {
+        return orderItems.stream()
+                .map(OrderItem::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    }
+
+    public static BigDecimal calculateOrderItemTotal(OrderItem item) {
+
+        BigDecimal quantity = BigDecimal.valueOf(item.getQuantity());
+
+        BigDecimal subtotal = item.getPrice().multiply(quantity);
+
+        if (item.getDiscount() != null) {
+            subtotal = subtotal.subtract(item.getDiscount());
         }
-        return totalAmount;
+
+        BigDecimal taxAmount = subtotal.multiply(item.getTax().getRate());
+
+        return subtotal.add(taxAmount);
     }
 }

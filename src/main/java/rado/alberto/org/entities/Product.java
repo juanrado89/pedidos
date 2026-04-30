@@ -7,6 +7,8 @@ import lombok.Setter;
 import jakarta.validation.constraints.NotNull;
 import rado.alberto.org.variables.ProductCategory;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -60,6 +62,9 @@ public class Product {
     @Basic
     @Column(name = "discount")
     private String discount;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> items;
 
     @Override
     public int hashCode() {

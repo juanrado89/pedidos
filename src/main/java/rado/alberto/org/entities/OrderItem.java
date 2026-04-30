@@ -1,6 +1,7 @@
 package rado.alberto.org.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import rado.alberto.org.variables.Tax;
@@ -17,12 +18,36 @@ public class OrderItem {
     @Column(name = "id_order_item", nullable = false)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_order")
     private Order order;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_product")
     private Product product;
+
+    @NotNull
+    @Basic
     private int quantity;
+
+    @NotNull
+    @Basic
+    @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
+
+    @NotNull
+    @Basic
+    @Column(name = "discount", precision = 10, scale = 2)
     private BigDecimal discount;
+
+    @Enumerated(EnumType.ORDINAL)
+    @NotNull
+    @Column(name = "tax", nullable = false, precision = 3, scale = 2)
     private Tax tax;
+
+    @NotNull
+    @Basic
+    @Column(name = "totalPrice", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice;
 
     @Override
