@@ -63,4 +63,32 @@ public class Address {
     @Size(min = 0,max = 5)
     @Basic
     private String door;
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Address other)) return false;
+        return id != 0 && id.equals(other.id);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Address{");
+        sb.append("id=").append(id);
+        sb.append(", country='").append(country).append('\'');
+        sb.append(", city='").append(city).append('\'');
+        sb.append(", state='").append(state).append('\'');
+        sb.append(", zip='").append(zip).append('\'');
+        sb.append(", street='").append(street).append('\'');
+        sb.append(", floor='").append(floor).append('\'');
+        sb.append(", building='").append(building).append('\'');
+        sb.append(", door='").append(door).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }

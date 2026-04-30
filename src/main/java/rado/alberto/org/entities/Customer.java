@@ -18,7 +18,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id_customer", nullable = false)
     private Long id;
 
     @NotNull
@@ -58,4 +58,29 @@ public class Customer {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Customer other)) return false;
+        return id != 0 && id.equals(other.id);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Customer{");
+        sb.append("id=").append(id);
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", lastName='").append(lastName).append('\'');
+        sb.append(", address=").append(address);
+        sb.append(", telephone=").append(telephone);
+        sb.append(", email='").append(email).append('\'');
+        sb.append(", password='").append(password).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }
