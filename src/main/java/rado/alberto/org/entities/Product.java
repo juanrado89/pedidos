@@ -7,6 +7,7 @@ import lombok.Setter;
 import jakarta.validation.constraints.NotNull;
 import rado.alberto.org.variables.ProductCategory;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -43,8 +44,8 @@ public class Product {
     @NotNull
     @Size(max = 100)
     @Basic
-    @Column(name = "price", nullable = false)
-    private String price;
+    @Column(name = "price", nullable = false, precision = 10, scale = 2)
+    private BigDecimal price;
 
     @NotNull
     @Size(max = 80)
@@ -56,14 +57,14 @@ public class Product {
     @Size(max = 10)
     @Basic
     @Column(name = "stock", nullable = false)
-    private String stock;
+    private Integer stock;
 
     @Size(max = 4)
     @Basic
-    @Column(name = "discount")
-    private String discount;
+    @Column(name = "discount", precision = 10, scale = 2)
+    private BigDecimal discount;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "order")
     private List<OrderItem> items;
 
     @Override
@@ -88,11 +89,11 @@ public class Product {
             sb.append("\nimage = ").append(image);
         }
         sb.append("\nsku = ").append(sku);
-        sb.append("\nprice = ").append(price);
+        sb.append("\nprice = ").append(price.toString());
         sb.append("\ncategory = ").append(category);
         sb.append("\nstock = ").append(stock);
-        if(this.discount != null && !this.discount.isEmpty() && !this.discount.isBlank()){
-            sb.append("\ndiscount = ").append(discount);
+        if(this.discount != null && this.discount.compareTo(BigDecimal.ZERO) != 0){
+            sb.append("\ndiscount = ").append(discount.toString());
         }
         sb.append('}');
         return sb.toString();

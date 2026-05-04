@@ -46,7 +46,7 @@ public class Order {
     @Column(name = "orderDate", nullable = false)
     private LocalDateTime orderDate;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "order")
     private List<OrderItem> items;
 
     @Override
@@ -59,5 +59,20 @@ public class Order {
         if (this == o) return true;
         if (!(o instanceof Order other)) return false;
         return id != 0 && id.equals(other.id);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Order{");
+        sb.append("id=").append(id);
+        sb.append("\ncustomer = ").append(customer);
+        sb.append("\nshippingAddress = ").append(shippingAddress);
+        sb.append("\nbillingAddress = ").append(billingAddress);
+        sb.append("\norderStatus = ").append(orderStatus.getDescripcion());
+        sb.append("\ntotalAmount = ").append(totalAmount.toString());
+        sb.append("\norderDate = ").append(orderDate.toString());
+        sb.append("\nitems = ").append(items.toString());
+        sb.append('}');
+        return sb.toString();
     }
 }

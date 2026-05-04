@@ -25,42 +25,36 @@ public class Customer {
 
     @NotNull
     @Size(max = 80)
-    @Basic
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, length = 80)
     private String name;
 
     @NotNull
     @Size(max = 100)
-    @Basic
-    @Column(name = "last_name", nullable = false)
+    @Column(name = "last_name", nullable = false, length = 100)
     private String lastName;
 
-    @NotNull
-    @OneToMany(mappedBy = "address", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "addresses")
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Address> addresses;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "orders")
+    @OneToMany(mappedBy = "customer")
+    private List<Payment> payments;
+
+    @OneToMany(mappedBy = "customer")
     private List<Order> orders;
 
-
-    @Size(max = 14)
-    @Basic
-    @Column(name = "telephone")
-    private int telephone;
+    @Size(max = 20)
+    @Column(name = "telephone", length = 20)
+    private String telephone;
 
     @NotNull
-    @Size(max = 140)
-    @Basic
     @Email
-    @Column(name = "name", nullable = false)
+    @Size(max = 140)
+    @Column(name = "email", nullable = false, unique = true, length = 140)
     private String email;
 
     @NotNull
-    @Size(max = 50)
-    @Basic
-    @Column(name = "password", nullable = false)
+    @Size(max = 255)
+    @Column(name = "password", nullable = false, length = 255)
     private String password;
 
     @Override
@@ -81,12 +75,14 @@ public class Customer {
         sb.append("id = ").append(id);
         sb.append("\nname = ").append(name);
         sb.append("\nlastName = ").append(lastName);
-        int count = 1;
-        for (Address address : addresses) {
-            sb.append("\naddress nº ").append(count).append(" = ").append(address.toString());
-            count++;
+        if (addresses != null) {
+            int count = 1;
+            for (Address address : addresses) {
+                sb.append("\naddress nº ").append(count).append(" = ").append(address.toString());
+                count++;
+            }
         }
-        if(this.telephone != -1){
+        if(this.telephone != null && !this.telephone.isBlank()){
             sb.append("\ntelephone = ").append(telephone);
         }
         sb.append("\nemail = ").append(email);

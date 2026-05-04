@@ -40,9 +40,9 @@ public class OrderItem {
     @Column(name = "discount", precision = 10, scale = 2)
     private BigDecimal discount;
 
-    @Enumerated(EnumType.ORDINAL)
     @NotNull
-    @Column(name = "tax", nullable = false, precision = 3, scale = 2)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tax", nullable = false, length = 30)
     private Tax tax;
 
     @NotNull
@@ -60,5 +60,22 @@ public class OrderItem {
         if (this == o) return true;
         if (!(o instanceof OrderItem other)) return false;
         return id != 0 && id.equals(other.id);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("OrderItem{");
+        sb.append("id=").append(id);
+        sb.append("\norder = ").append(order);
+        sb.append("\nproduct = ").append(product);
+        sb.append("\nquantity = ").append(quantity);
+        sb.append("\nprice = ").append(price.toString());
+        if(discount != null) {
+            sb.append("\ndiscount = ").append(discount.toString());
+        }
+        sb.append("\ntax = ").append(tax.getRate().toString());
+        sb.append("\ntotalPrice = ").append(totalPrice.toString());
+        sb.append('}');
+        return sb.toString();
     }
 }
