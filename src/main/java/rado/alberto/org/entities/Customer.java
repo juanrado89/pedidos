@@ -66,7 +66,7 @@ public class Customer {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Customer other)) return false;
-        return id != 0 && id.equals(other.id);
+        return id != null && id.equals(other.id);
     }
 
     @Override
@@ -86,7 +86,6 @@ public class Customer {
             sb.append("\ntelephone = ").append(telephone);
         }
         sb.append("\nemail = ").append(email);
-        sb.append("\npassword = ").append(password);
         sb.append('}');
         return sb.toString();
     }

@@ -82,7 +82,7 @@ public class Address {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Address other)) return false;
-        return id != 0 && id.equals(other.id);
+        return id != null && id.equals(other.id);
     }
 
     @Override

@@ -10,7 +10,7 @@ public class PricingCalculator {
     private PricingCalculator() {
 
     }
-    public static BigDecimal CalculateTotalPrice(List<OrderItem> orderItems) {
+    public static BigDecimal calculateTotalPrice(List<OrderItem> orderItems) {
         return orderItems.stream()
                 .map(OrderItem::getTotalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -24,7 +24,7 @@ public class PricingCalculator {
         BigDecimal subtotal = item.getPrice().multiply(quantity);
 
         if (item.getDiscount() != null) {
-            subtotal = subtotal.subtract(item.getDiscount());
+            subtotal = subtotal.multiply(BigDecimal.ONE.subtract(item.getDiscount()));
         }
 
         BigDecimal taxAmount = subtotal.multiply(item.getTax().getRate());

@@ -1,10 +1,9 @@
 package rado.alberto.org.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
-import jakarta.validation.constraints.NotNull;
 import rado.alberto.org.variables.ProductCategory;
 
 import java.math.BigDecimal;
@@ -38,33 +37,35 @@ public class Product {
 
     @NotNull
     @Basic
-    @Column(name = "sku", nullable = false)
+    @Column(name = "sku", nullable = false,  unique = true)
     private String sku;
 
     @NotNull
-    @Size(max = 100)
+    @Digits(integer = 20, fraction = 2)
+    @DecimalMin("0.00")
     @Basic
-    @Column(name = "price", nullable = false, precision = 10, scale = 2)
+    @Column(name = "price", nullable = false, precision = 20, scale = 2)
     private BigDecimal price;
 
     @NotNull
-    @Size(max = 80)
     @Basic
+    @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)
     private ProductCategory category;
 
     @NotNull
-    @Size(max = 10)
+    @Min(0)
     @Basic
     @Column(name = "stock", nullable = false)
     private Integer stock;
 
-    @Size(max = 4)
+    @Digits(integer = 2, fraction = 2)
+    @DecimalMin("0.00")
     @Basic
-    @Column(name = "discount", precision = 10, scale = 2)
+    @Column(name = "discount", precision = 2, scale = 2)
     private BigDecimal discount;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "product")
     private List<OrderItem> items;
 
     @Override
@@ -76,7 +77,7 @@ public class Product {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Product other)) return false;
-        return id != 0 && id.equals(other.id);
+        return id != null && id.equals(other.id);
     }
 
     @Override

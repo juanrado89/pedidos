@@ -1,6 +1,8 @@
 package rado.alberto.org.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,7 +40,9 @@ public class Order {
 
     @NotNull
     @Basic
-    @Column(name = "total_amount", nullable = false, precision = 10, scale = 2)
+    @Digits(integer = 20, fraction = 2)
+    @DecimalMin("0.00")
+    @Column(name = "total_amount", nullable = false, precision = 20, scale = 2)
     private BigDecimal totalAmount;
 
     @NotNull
@@ -46,7 +50,7 @@ public class Order {
     @Column(name = "orderDate", nullable = false)
     private LocalDateTime orderDate;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items;
 
     @Override
@@ -58,14 +62,13 @@ public class Order {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Order other)) return false;
-        return id != 0 && id.equals(other.id);
+        return id != null && id.equals(other.id);
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Order{");
         sb.append("id=").append(id);
-        sb.append("\ncustomer = ").append(customer);
         sb.append("\nshippingAddress = ").append(shippingAddress);
         sb.append("\nbillingAddress = ").append(billingAddress);
         sb.append("\norderStatus = ").append(orderStatus.getDescripcion());

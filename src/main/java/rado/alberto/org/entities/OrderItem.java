@@ -1,6 +1,9 @@
 package rado.alberto.org.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,16 +31,20 @@ public class OrderItem {
 
     @NotNull
     @Basic
+    @Min(1)
     private int quantity;
 
     @NotNull
     @Basic
-    @Column(name = "price", nullable = false, precision = 10, scale = 2)
+    @Digits(integer = 20, fraction = 2)
+    @DecimalMin("0.00")
+    @Column(name = "price", nullable = false, precision = 20, scale = 2)
     private BigDecimal price;
 
-    @NotNull
     @Basic
-    @Column(name = "discount", precision = 10, scale = 2)
+    @Digits(integer = 2, fraction = 2)
+    @DecimalMin("0.00")
+    @Column(name = "discount", precision = 2, scale = 2)
     private BigDecimal discount;
 
     @NotNull
@@ -47,7 +54,9 @@ public class OrderItem {
 
     @NotNull
     @Basic
-    @Column(name = "totalPrice", nullable = false, precision = 10, scale = 2)
+    @Digits(integer = 20, fraction = 2)
+    @DecimalMin("0.00")
+    @Column(name = "totalPrice", nullable = false, precision = 20, scale = 2)
     private BigDecimal totalPrice;
 
     @Override
@@ -59,14 +68,13 @@ public class OrderItem {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof OrderItem other)) return false;
-        return id != 0 && id.equals(other.id);
+        return id != null && id.equals(other.id);
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("OrderItem{");
         sb.append("id=").append(id);
-        sb.append("\norder = ").append(order);
         sb.append("\nproduct = ").append(product);
         sb.append("\nquantity = ").append(quantity);
         sb.append("\nprice = ").append(price.toString());

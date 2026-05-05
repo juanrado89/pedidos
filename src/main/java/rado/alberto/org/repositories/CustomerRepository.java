@@ -6,5 +6,5 @@ import rado.alberto.org.entities.Customer;
 import java.util.Optional;
 
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
-    Optional<Customer> findByEmailContains(String email);
+    Optional<Customer> findByEmail(String email);
 }

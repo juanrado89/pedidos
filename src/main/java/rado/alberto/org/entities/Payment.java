@@ -2,11 +2,15 @@ package rado.alberto.org.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import rado.alberto.org.variables.PaymentMethod;
 import rado.alberto.org.variables.PaymentStatus;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -19,11 +23,13 @@ public class Payment {
 
     @NotNull
     @Basic
+    @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
     private PaymentMethod paymentMethod;
 
     @NotNull
     @Basic
+    @Enumerated(EnumType.STRING)
     @Column(name = "payment_status", nullable = false)
     private PaymentStatus paymentStatus;
 
@@ -45,7 +51,7 @@ public class Payment {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Payment other)) return false;
-        return id != 0 && id.equals(other.id);
+        return id != null && id.equals(other.id);
     }
 
     @Override
