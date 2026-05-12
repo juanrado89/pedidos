@@ -13,7 +13,12 @@ import java.util.List;
 /**
  * DTO for {@link Order}
  */
-public record OrderDto(Long id, CustomerResponseDto customer, AddressDto shippingAddress, AddressDto billingAddress,
-                       OrderStatus orderStatus, @NotNull @Digits(integer = 20, fraction = 2) BigDecimal totalAmount,
-                       @NotNull LocalDateTime orderDate, List<OrderItemDto> items) implements Serializable {
+public record OrderDto(Long id,
+                       CustomerOrderResponseDto customer,
+                       AddressDto shippingAddress,
+                       AddressDto billingAddress,
+                       OrderStatus orderStatus,
+                       @NotNull @Digits(integer = 20, fraction = 2) BigDecimal totalAmount,
+                       @NotNull LocalDateTime orderDate,
+                       List<OrderItemDto> items) implements Serializable {
 }

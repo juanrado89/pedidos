@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.validation.constraints.NotNull;
+import rado.alberto.org.variables.Role;
 
 import java.util.List;
 
@@ -53,8 +54,15 @@ public class Customer {
     private String email;
 
     @NotNull
-    @Size(max = 255)
-    @Column(name = "password", nullable = false, length = 255)
+    @Basic(fetch = FetchType.LAZY)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role = Role.CUSTOMER;
+
+    @NotNull
+    @Basic(fetch = FetchType.LAZY)
+    @Size(min = 12, max = 70)
+    @Column(name = "password", nullable = false, length = 70)
     private String password;
 
     @Override
@@ -86,6 +94,7 @@ public class Customer {
             sb.append("\ntelephone = ").append(telephone);
         }
         sb.append("\nemail = ").append(email);
+        sb.append("\nrole = ").append(role);
         sb.append('}');
         return sb.toString();
     }

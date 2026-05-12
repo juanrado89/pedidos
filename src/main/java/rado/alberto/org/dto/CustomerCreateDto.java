@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import rado.alberto.org.entities.Customer;
+import rado.alberto.org.variables.Role;
 
 import java.io.Serializable;
 import java.util.List;

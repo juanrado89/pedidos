@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import rado.alberto.org.entities.Customer;
+import rado.alberto.org.variables.Role;
 
 import java.io.Serializable;
 
@@ -15,5 +16,6 @@ public record CustomerOrderResponseDto(
         Long id, @NotNull @Size(max = 80) String name,
         @NotNull @Size(max = 100) String lastName,
         @Size(max = 20) String telephone,
-        @NotNull @Size(max = 140) @Email String email) implements Serializable {
+        @NotNull @Size(max = 140) @Email String email,
+        @NotNull Role role) implements Serializable {
 }

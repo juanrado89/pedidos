@@ -1,14 +1,16 @@
 package rado.alberto.org.controllers;
 
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import rado.alberto.org.dto.ProductCreateDto;
 import rado.alberto.org.dto.ProductDto;
 import rado.alberto.org.services.ProductService;
 
-import java.util.List;
+import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 
 @RestController()
@@ -21,18 +23,29 @@ public class ProductController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<ProductDto>> getAllProduct() {
-        List<ProductDto> products = productService.getAllProducts();
-        if (products.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }else{
-            return ResponseEntity.ok(products);
-        }
+    public ResponseEntity<Page<ProductDto>> getAllProduct(@PageableDefault(size = 20, sort = "name") Pageable pageable) {
+        return ResponseEntity.ok(productService.getAllProducts(pageable));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable Long id) {
         Optional<ProductDto> product = productService.getProductById(id);
         return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+    @GetMapping("/name/{name}")
+    public ResponseEntity<ProductDto> getProductByName(@PathVariable String name) {
+        Optional<ProductDto> product = productService.getProductByName(name);
+        return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+    @GetMapping("/sku/{sku}")
+    public ResponseEntity<ProductDto> getProductBySku(@PathVariable String sku) {
+        Optional<ProductDto> product = productService.getProductBySku(sku);
+        return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @PostMapping("/")
+    public ResponseEntity<ProductDto> createProduct(@RequestBody @Valid ProductCreateDto dto) {
+        return ResponseEntity.ok(productService.createProduct(dto));
     }
 }
