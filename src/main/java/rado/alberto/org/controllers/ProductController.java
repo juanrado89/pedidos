@@ -16,6 +16,7 @@ import java.util.Optional;
 @RestController()
 @RequestMapping("/product")
 public class ProductController {
+
     private final ProductService productService;
 
     public ProductController(ProductService productService) {
@@ -43,9 +44,27 @@ public class ProductController {
         return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/")
     public ResponseEntity<ProductDto> createProduct(@RequestBody @Valid ProductCreateDto dto) {
         return ResponseEntity.ok(productService.createProduct(dto));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/")
+    public ResponseEntity<ProductDto> updateProduct(@RequestBody @Valid ProductDto dto) {
+        ProductDto result = productService.updateProduct(dto);
+        if(result != null) {
+            return ResponseEntity.ok(result);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ProductDto> deleteProductById(@PathVariable Long id) {
+        productService.deleteProductById(id);
+        return ResponseEntity.ok().build();
     }
 }
