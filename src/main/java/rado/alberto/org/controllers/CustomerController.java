@@ -22,27 +22,27 @@ public class CustomerController {
 
     @GetMapping("/id/{id}")
     public ResponseEntity<CustomerResponseDto> findById(@PathVariable Long id) {
-        Optional<CustomerResponseDto> result = customerService.getCustomerById(id);
-        return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        CustomerResponseDto result = customerService.getCustomerById(id);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/email/{email}")
     public ResponseEntity<CustomerResponseDto> findByEmail(@PathVariable String email) {
-        Optional<CustomerResponseDto> result = customerService.getCustomerByEmail(email);
-        return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        CustomerResponseDto result = customerService.getCustomerByEmail(email);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/")
     public  ResponseEntity<CustomerResponseDto> createCustomer(@RequestBody CustomerCreateDto customerCreateDto) {
-        Optional<CustomerResponseDto> result = customerService.createCustomer(customerCreateDto);
-        return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
+        CustomerResponseDto result = customerService.createCustomer(customerCreateDto);
+        return ResponseEntity.ok(result);
     }
 
     @PreAuthorize(("hasRole('CUSTOMER')"))
     @PutMapping("/")
     public ResponseEntity<CustomerResponseDto> updateCustomer(@RequestBody CustomerUpdateDto customerDto) {
-        Optional<CustomerResponseDto> result = customerService.updateCustomer(customerDto);
-        return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
+        CustomerResponseDto result = customerService.updateCustomer(customerDto);
+        return ResponseEntity.ok(result);
     }
 
     @PreAuthorize(("hasRole('CUSTOMER')"))

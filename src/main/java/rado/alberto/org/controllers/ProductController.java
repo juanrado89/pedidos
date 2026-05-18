@@ -30,18 +30,18 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable Long id) {
-        Optional<ProductDto> product = productService.getProductById(id);
-        return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        ProductDto product = productService.getProductById(id);
+        return ResponseEntity.ok(product);
     }
     @GetMapping("/name/{name}")
     public ResponseEntity<ProductDto> getProductByName(@PathVariable String name) {
-        Optional<ProductDto> product = productService.getProductByName(name);
-        return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        ProductDto product = productService.getProductByName(name);
+        return ResponseEntity.ok(product);
     }
     @GetMapping("/sku/{sku}")
     public ResponseEntity<ProductDto> getProductBySku(@PathVariable String sku) {
-        Optional<ProductDto> product = productService.getProductBySku(sku);
-        return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        ProductDto product = productService.getProductBySku(sku);
+        return ResponseEntity.ok(product);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -54,11 +54,7 @@ public class ProductController {
     @PutMapping("/")
     public ResponseEntity<ProductDto> updateProduct(@RequestBody @Valid ProductDto dto) {
         ProductDto result = productService.updateProduct(dto);
-        if(result != null) {
-            return ResponseEntity.ok(result);
-        }else{
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(result);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

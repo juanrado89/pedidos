@@ -20,6 +20,12 @@ public class GlobalExceptionHandler {
                 .body(e.getMessage());
     }
 
+    @ExceptionHandler(InvalidCustomerException.class)
+    public ResponseEntity<String> handleInvalidCustomer(InvalidCustomerException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
+    }
+
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<String> handleProductNotFoundException(Exception e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -29,6 +35,24 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ProductAlreadyExistException.class)
     public ResponseEntity<String> handleProductAlreadyExists(CustomerAlreadyExistException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidProductException.class)
+    public ResponseEntity<String> handleInvalidProductException(InvalidProductException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidAddressException.class)
+    public ResponseEntity<String> handleInvalidAddress(InvalidAddressException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
+    }
+
+    @ExceptionHandler(AddressNotFoundException.class)
+    public ResponseEntity<String> handleAddressNotFound(AddressNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(e.getMessage());
     }
 

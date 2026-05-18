@@ -1,7 +1,9 @@
 package rado.alberto.org.mapper;
 
 import org.mapstruct.Mapper;
+import rado.alberto.org.dto.AddressCreateDto;
 import rado.alberto.org.dto.AddressDto;
+import rado.alberto.org.dto.AddressUpdateDto;
 import rado.alberto.org.entities.Address;
 
 import java.util.List;
@@ -13,4 +15,8 @@ public interface AddressMapper {
 
     List<AddressDto> toDtos(List<Address> addressList);
     List<Address> toEntities(List<AddressDto> addressDtoList);
+
+    Address toEntity(AddressCreateDto dto);
+
+    Address toEntity(AddressUpdateDto dto);
 }

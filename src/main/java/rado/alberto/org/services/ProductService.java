@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import rado.alberto.org.dto.ProductCreateDto;
 import rado.alberto.org.dto.ProductDto;
 import rado.alberto.org.entities.Product;
+import rado.alberto.org.exceptions.InvalidProductException;
 import rado.alberto.org.exceptions.ProductAlreadyExistException;
 import rado.alberto.org.exceptions.ProductNotFoundException;
 import rado.alberto.org.mapper.ProductMapper;
@@ -30,28 +31,28 @@ public class ProductService {
                 .map(productMapper::toDto);
     }
 
-    public Optional<ProductDto> getProductById(Long id) {
+    public ProductDto getProductById(Long id) {
         Optional<Product> result = productRepository.findById(id);
         if(result.isEmpty()) {
             throw new ProductNotFoundException();
         }
-        return Optional.of(productMapper.toDto(result.get()));
+        return productMapper.toDto(result.get());
     }
 
-    public Optional<ProductDto> getProductByName(String name) {
+    public ProductDto getProductByName(String name) {
         Optional<Product> result = productRepository.findByName(name);
         if(result.isEmpty()) {
             throw new ProductNotFoundException();
         }
-        return Optional.of(productMapper.toDto(result.get()));
+        return productMapper.toDto(result.get());
     }
 
-    public Optional<ProductDto> getProductBySku(String sku) {
+    public ProductDto getProductBySku(String sku) {
         Optional<Product> result = productRepository.findBySku(sku);
         if(result.isEmpty()) {
             throw new ProductNotFoundException();
         }
-        return Optional.of(productMapper.toDto(result.get()));
+        return productMapper.toDto(result.get());
     }
 
     @Transactional
@@ -61,27 +62,7 @@ public class ProductService {
             throw new ProductAlreadyExistException();
         }
         Product product = new Product();
-        if(dto.name() != null && !dto.name().isEmpty()) {
-            product.setName(dto.name());
-        }
-        if(dto.description() != null && !dto.description().isEmpty()) {
-            product.setDescription(dto.description());
-        }
-        product.setPrice(dto.price());
-        if(dto.category() != null) {
-            product.setCategory(dto.category());
-        }
-        if(dto.image() != null && !dto.image().isEmpty()) {
-            product.setImage(dto.image());
-        }
-        if(dto.sku() != null && !dto.sku().isEmpty()) {
-            product.setSku(dto.sku());
-        }
-        product.setPrice(dto.price());
-        product.setStock(dto.stock());
-        product.setDiscount(dto.discount());
-        productRepository.save(product);
-        return productMapper.toDto(product);
+        return productMapper.toDto(productRepository.save(comprobationProduct(dto, product, productMapper)));
     }
 
     @Transactional
@@ -91,26 +72,7 @@ public class ProductService {
             throw new ProductNotFoundException();
         }
         Product product = searchResult.get();
-        if(dto.name() != null && !dto.name().isEmpty()) {
-            product.setName(dto.name());
-        }
-        if(dto.description() != null && !dto.description().isEmpty()) {
-            product.setDescription(dto.description());
-        }
-        if(dto.category() != null) {
-            product.setCategory(dto.category());
-        }
-        if(dto.image() != null && !dto.image().isEmpty()) {
-            product.setImage(dto.image());
-        }
-        if(dto.sku() != null && !dto.sku().isEmpty()) {
-            product.setSku(dto.sku());
-        }
-        product.setStock(dto.stock());
-        product.setDiscount(dto.discount());
-        product.setPrice(dto.price());
-        productRepository.save(product);
-        return productMapper.toDto(product);
+        return productMapper.toDto(productRepository.save(comprobationProduct(dto, product, productMapper)));
     }
 
     @Transactional
@@ -120,6 +82,37 @@ public class ProductService {
             throw new ProductNotFoundException();
         }
         productRepository.deleteById(id);
+    }
+
+    private Product comprobationProduct(Object o, Product product, ProductMapper mapper){
+        Product productDto;
+        if(o instanceof ProductDto) {
+            productDto = mapper.toEntity((ProductDto) o);
+            product.setId(productDto.getId());
+        }else if(o instanceof ProductCreateDto) {
+            productDto = mapper.toEntity((ProductCreateDto) o);
+        }else{
+            throw new InvalidProductException();
+        }
+        if(productDto.getName() != null && !productDto.getName().isEmpty()) {
+            product.setName(productDto.getName());
+        }
+        if(productDto.getDescription() != null && !productDto.getDescription().isEmpty()) {
+            product.setDescription(productDto.getDescription());
+        }
+        if(productDto.getCategory() != null) {
+            product.setCategory(productDto.getCategory());
+        }
+        if(productDto.getImage() != null && !productDto.getImage().isEmpty()) {
+            product.setImage(productDto.getImage());
+        }
+        if(productDto.getSku() != null && !productDto.getSku().isEmpty()) {
+            product.setSku(productDto.getSku());
+        }
+        product.setStock(productDto.getStock());
+        product.setDiscount(productDto.getDiscount());
+        product.setPrice(productDto.getPrice());
+        return product;
     }
 
 }
