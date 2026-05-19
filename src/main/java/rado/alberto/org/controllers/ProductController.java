@@ -11,7 +11,6 @@ import rado.alberto.org.dto.ProductDto;
 import rado.alberto.org.services.ProductService;
 
 import org.springframework.data.domain.Pageable;
-import java.util.Optional;
 
 @RestController()
 @RequestMapping("/product")

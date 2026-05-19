@@ -1,7 +1,6 @@
 package rado.alberto.org.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import rado.alberto.org.dto.CustomerCreateDto;
 import rado.alberto.org.dto.CustomerResponseDto;
 import rado.alberto.org.dto.CustomerUpdateDto;

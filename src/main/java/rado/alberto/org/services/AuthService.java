@@ -8,7 +8,6 @@ import rado.alberto.org.entities.Administrator;
 import rado.alberto.org.entities.Customer;
 import rado.alberto.org.repositories.AdministratorRepository;
 import rado.alberto.org.repositories.CustomerRepository;
-import rado.alberto.org.security.JwtService;
 
 @Service
 public class AuthService {
