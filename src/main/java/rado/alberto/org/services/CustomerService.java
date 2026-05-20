@@ -54,13 +54,12 @@ public class CustomerService {
     }
 
     @Transactional
-    public CustomerResponseDto updateCustomer(CustomerUpdateDto customerDto) {
-        Optional<Customer> search = customerRepository.findByEmail(customerDto.email());
+    public CustomerResponseDto updateCustomer(CustomerUpdateDto customerDto, String mail) {
+        Optional<Customer> search = customerRepository.findByEmail(mail);
         if (search.isEmpty()) {
             throw new CustomerNotFoundException();
         }
-        Customer customer = search.get();
-        return customerMapper.toDtoResponse(customerRepository.save(verifyCustomer(customerDto, customer)));
+        return customerMapper.toDtoResponse(customerRepository.save(verifyCustomer(customerDto, search.get())));
     }
 
     @Transactional
@@ -105,5 +104,10 @@ public class CustomerService {
             customer.setEmail(customerDto.getEmail());
         }
         return customer;
+    }
+
+    public List<CustomerResponseDto> getAllCustomers() {
+        List<Customer> result = customerRepository.findAll();
+        return customerMapper.toDtosResponse(result);
     }
 }

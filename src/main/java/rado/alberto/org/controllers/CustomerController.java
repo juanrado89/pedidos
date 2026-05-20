@@ -3,15 +3,17 @@ package rado.alberto.org.controllers;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import rado.alberto.org.dto.CustomerCreateDto;
 import rado.alberto.org.dto.CustomerResponseDto;
 import rado.alberto.org.dto.CustomerUpdateDto;
+import rado.alberto.org.security.AuthenticatedUser;
 import rado.alberto.org.services.CustomerService;
 
-import java.util.Optional;
+import java.util.List;
 
-@RestController()
+@RestController
 @RequestMapping("/customer")
 public class CustomerController {
 
@@ -21,15 +23,38 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @GetMapping("/id/{id}")
-    public ResponseEntity<CustomerResponseDto> findById(@PathVariable Long id) {
-        CustomerResponseDto result = customerService.getCustomerById(id);
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @GetMapping("/me")
+    public ResponseEntity<CustomerResponseDto> findMe(@AuthenticationPrincipal AuthenticatedUser user){
+        CustomerResponseDto result = customerService.getCustomerById(user.id());
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/email/{email}")
-    public ResponseEntity<CustomerResponseDto> findByEmail(@PathVariable String email) {
-        CustomerResponseDto result = customerService.getCustomerByEmail(email);
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @GetMapping("/me/email")
+    public ResponseEntity<CustomerResponseDto> findByEmail(@AuthenticationPrincipal AuthenticatedUser user) {
+        CustomerResponseDto result = customerService.getCustomerByEmail(user.email());
+        return ResponseEntity.ok(result);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin/{idCustomer}")
+    public ResponseEntity<CustomerResponseDto> findByCustomerById(@PathVariable Long idCustomer) {
+        CustomerResponseDto result = customerService.getCustomerById(idCustomer);
+        return ResponseEntity.ok(result);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin/mail/{mail}")
+    public ResponseEntity<CustomerResponseDto> findByMail(@PathVariable String mail) {
+        CustomerResponseDto result = customerService.getCustomerByEmail(mail);
+        return ResponseEntity.ok(result);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin/all")
+    public ResponseEntity<List<CustomerResponseDto>> findAllCustomers() {
+        List<CustomerResponseDto> result = customerService.getAllCustomers();
         return ResponseEntity.ok(result);
     }
 
@@ -39,17 +64,17 @@ public class CustomerController {
         return ResponseEntity.ok(result);
     }
 
-    @PreAuthorize(("hasRole('CUSTOMER')"))
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PutMapping("/")
-    public ResponseEntity<CustomerResponseDto> updateCustomer(@RequestBody @Valid CustomerUpdateDto customerDto) {
-        CustomerResponseDto result = customerService.updateCustomer(customerDto);
+    public ResponseEntity<CustomerResponseDto> updateCustomer(@RequestBody @Valid CustomerUpdateDto customerDto, @AuthenticationPrincipal AuthenticatedUser user ) {
+        CustomerResponseDto result = customerService.updateCustomer(customerDto,user.email());
         return ResponseEntity.ok(result);
     }
 
-    @PreAuthorize(("hasRole('CUSTOMER')"))
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteCustomer(@PathVariable Long id) {
-        customerService.deleteCustomer(id);
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @DeleteMapping("/")
+    public ResponseEntity deleteCustomer(@AuthenticationPrincipal AuthenticatedUser user) {
+        customerService.deleteCustomer(user.id());
         return ResponseEntity.noContent().build();
     }
 

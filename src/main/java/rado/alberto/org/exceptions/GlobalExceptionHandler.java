@@ -62,6 +62,12 @@ public class GlobalExceptionHandler {
                 .body(e.getMessage());
     }
 
+    @ExceptionHandler(InvalidOrderException.class)
+    public ResponseEntity<String> handleInvalidOrderException(InvalidOrderException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
+    }
+
     @ExceptionHandler(OrderItemNotFoundException.class)
     public ResponseEntity<String> handleOrderItemNotFound(OrderItemNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)

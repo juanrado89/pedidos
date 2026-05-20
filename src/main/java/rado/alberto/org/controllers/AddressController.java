@@ -3,15 +3,17 @@ package rado.alberto.org.controllers;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import rado.alberto.org.dto.AddressCreateDto;
 import rado.alberto.org.dto.AddressDto;
 import rado.alberto.org.dto.AddressUpdateDto;
+import rado.alberto.org.security.AuthenticatedUser;
 import rado.alberto.org.services.AddressService;
 
 import java.util.List;
 
-@RestController()
+@RestController
 @RequestMapping("/address")
 public class AddressController {
 
@@ -21,35 +23,38 @@ public class AddressController {
         this.addressService = addressService;
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/{id}")
-    public ResponseEntity<AddressDto> getAddressById(@PathVariable long id) {
-        AddressDto result = addressService.getAddressById(id);
+    public ResponseEntity<AddressDto> getAddressById(@PathVariable long id, @AuthenticationPrincipal AuthenticatedUser user) {
+        AddressDto result = addressService.getAddressById(id, user.id());
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/all/{idCustomer}")
-    public ResponseEntity<List<AddressDto>> getAllAddressesByCustomerId(@PathVariable long idCustomer) {
-        List<AddressDto> result = addressService.getAllAddressByCustomerId(idCustomer);
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @GetMapping("/all")
+    public ResponseEntity<List<AddressDto>> getAllAddressesByCustomerId(@AuthenticationPrincipal AuthenticatedUser user) {
+        List<AddressDto> result = addressService.getAllAddressByCustomerId(user.id());
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/{idCustomer}")
-    public ResponseEntity<AddressDto> createAddress(@RequestBody @Valid AddressCreateDto addressDto, @PathVariable long idCustomer) {
-        AddressDto result = addressService.createAddress(addressDto, idCustomer);
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @PostMapping("/")
+    public ResponseEntity<AddressDto> createAddress(@RequestBody @Valid AddressCreateDto addressDto, @AuthenticationPrincipal AuthenticatedUser user) {
+        AddressDto result = addressService.createAddress(addressDto, user.id());
         return ResponseEntity.ok(result);
     }
 
-    @PreAuthorize(("hasRole('CUSTOMER')"))
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PutMapping("/")
-    public ResponseEntity<AddressDto> updateAddress(@RequestBody @Valid AddressUpdateDto addressDto) {
-        AddressDto result = addressService.updateAddress(addressDto);
+    public ResponseEntity<AddressDto> updateAddress(@RequestBody @Valid AddressUpdateDto addressDto, @AuthenticationPrincipal AuthenticatedUser user) {
+        AddressDto result = addressService.updateAddress(addressDto, user.id());
         return ResponseEntity.ok(result);
     }
 
-    @PreAuthorize(("hasRole('CUSTOMER')"))
+    @PreAuthorize("hasRole('CUSTOMER')")
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteAddress(@PathVariable long id) {
-        addressService.deleteAddressById(id);
+    public ResponseEntity deleteAddress(@PathVariable long id, @AuthenticationPrincipal AuthenticatedUser user) {
+        addressService.deleteAddressById(id, user.id());
         return ResponseEntity.noContent().build();
     }
 

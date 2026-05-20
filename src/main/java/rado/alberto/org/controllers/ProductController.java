@@ -12,7 +12,7 @@ import rado.alberto.org.services.ProductService;
 
 import org.springframework.data.domain.Pageable;
 
-@RestController()
+@RestController
 @RequestMapping("/product")
 public class ProductController {
 

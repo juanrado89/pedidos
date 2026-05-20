@@ -40,7 +40,7 @@ public class AuthService {
 
     private AuthResponse loginAdministrator(Administrator admin, String rawPassword) {
         if (!passwordEncoder.matches(rawPassword, admin.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new InvalidCredentialsException();
         }
 
         String accessToken = jwtService.generateAccessToken(
@@ -54,7 +54,7 @@ public class AuthService {
 
     private AuthResponse loginCustomer(Customer customer, String rawPassword) {
         if (!passwordEncoder.matches(rawPassword, customer.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new InvalidCredentialsException();
         }
 
         String accessToken = jwtService.generateAccessToken(

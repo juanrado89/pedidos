@@ -31,10 +31,13 @@ public class AddressService {
         this.addressMapper = addressMapper;
     }
 
-    public AddressDto getAddressById(long id) {
+    public AddressDto getAddressById(long id, Long idCustomer) {
         Optional<Address> result = addressRepository.findById(id);
         if(result.isEmpty()) {
             throw new AddressNotFoundException();
+        }
+        if(!result.get().getCustomer().getId().equals(idCustomer)) {
+            throw new CustomerNotFoundException();
         }
         return addressMapper.toDto(result.get());
     }
@@ -61,9 +64,12 @@ public class AddressService {
     }
 
     @Transactional
-    public AddressDto updateAddress(AddressUpdateDto addressDto) {
+    public AddressDto updateAddress(AddressUpdateDto addressDto, Long id) {
         Optional<Address> search = addressRepository.findById(addressDto.id());
         if (search.isEmpty()) {
+            throw new AddressNotFoundException();
+        }
+        if(!search.get().getCustomer().getId().equals(id)){
             throw new AddressNotFoundException();
         }
         Address address = search.get();
@@ -72,9 +78,12 @@ public class AddressService {
     }
 
     @Transactional
-    public void deleteAddressById(long id) {
+    public void deleteAddressById(long id, Long idCustomer) {
         Optional<Address> search = addressRepository.findById(id);
         if (search.isEmpty()) {
+            throw new AddressNotFoundException();
+        }
+        if (!search.get().getCustomer().getId().equals(idCustomer)) {
             throw new AddressNotFoundException();
         }
         addressRepository.deleteById(id);

@@ -26,6 +26,17 @@ public class PaymentService {
         this.paymentMapper = paymentMapper;
     }
 
+    public PaymentDto getPaymentById(Long id, Long idCustomer) {
+        Optional<Payment> search = paymentRepository.findById(id);
+        if(search.isEmpty()) {
+            throw new PaymentNotFoundException();
+        }
+        if(!search.get().getCustomer().getId().equals(idCustomer)) {
+            throw new PaymentNotFoundException();
+        }
+        return paymentMapper.toDto(search.get());
+    }
+
     public PaymentDto getPaymentById(Long id) {
         Optional<Payment> search = paymentRepository.findById(id);
         if(search.isEmpty()) {
@@ -40,7 +51,10 @@ public class PaymentService {
     }
 
     @Transactional
-    public PaymentDto createPayment(@Valid PaymentDto paymentDto) {
+    public PaymentDto createPayment(@Valid PaymentDto paymentDto, Long id) {
+        if(!paymentDto.customer().id().equals(id)) {
+            throw new InvalidPaymentException();
+        }
         Payment payment = new Payment();
         return paymentMapper.toDto(paymentRepository.save(verifyPayment(paymentDto, payment)));
     }

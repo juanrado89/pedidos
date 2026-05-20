@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import rado.alberto.org.dto.OrderDto;
 import rado.alberto.org.entities.Order;
 import rado.alberto.org.entities.OrderItem;
+import rado.alberto.org.exceptions.InvalidOrderException;
 import rado.alberto.org.exceptions.OrderNotFoundException;
 import rado.alberto.org.mapper.AddressMapper;
 import rado.alberto.org.mapper.CustomerMapper;
@@ -37,6 +38,16 @@ public class OrderService {
     }
 
 
+    public OrderDto getOrderById(Long id, Long idCustomer) {
+        Optional<Order> search = orderRepository.findById(id);
+        if (search.isEmpty()) {
+            throw new OrderNotFoundException();
+        }
+        if(!search.get().getCustomer().getId().equals(idCustomer)) {
+            throw new OrderNotFoundException();
+        }
+        return orderMapper.toDto(search.get());
+    }
     public OrderDto getOrderById(Long id) {
         Optional<Order> search = orderRepository.findById(id);
         if (search.isEmpty()) {
@@ -51,15 +62,21 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderDto createOrder(@Valid OrderDto orderDto) {
+    public OrderDto createOrder(@Valid OrderDto orderDto, Long id) {
+        if(!orderDto.customer().id().equals(id)){
+            throw new InvalidOrderException();
+        }
         Order order = new Order();
         return orderMapper.toDto(orderRepository.save(verifyOrder(order, orderDto, true)));
     }
 
     @Transactional
-    public OrderDto updateOrder(@Valid OrderDto orderDto) {
+    public OrderDto updateOrder(@Valid OrderDto orderDto, Long id) {
         Optional<Order> search = orderRepository.findById(orderDto.id());
         if (search.isEmpty()) {
+            throw new OrderNotFoundException();
+        }
+        if(!search.get().getCustomer().getId().equals(id)){
             throw new OrderNotFoundException();
         }
         Order order = search.get();
@@ -67,9 +84,9 @@ public class OrderService {
     }
 
     @Transactional
-    public void deleteOrder(Long id) {
+    public void deleteOrder(Long id, Long idCustomer) {
         Optional<Order> search = orderRepository.findById(id);
-        if (search.isEmpty()) {
+        if (search.isEmpty() || !search.get().getCustomer().getId().equals(idCustomer)) {
             throw new OrderNotFoundException();
         }
         orderRepository.deleteById(id);
