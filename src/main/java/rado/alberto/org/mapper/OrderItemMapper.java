@@ -2,6 +2,7 @@ package rado.alberto.org.mapper;
 
 import org.mapstruct.Mapper;
 import rado.alberto.org.dto.OrderItemDto;
+import rado.alberto.org.dto.OrderItemResponseDto;
 import rado.alberto.org.entities.OrderItem;
 
 import java.util.List;
@@ -10,8 +11,10 @@ import java.util.List;
 public interface OrderItemMapper {
 
     OrderItemDto toDto(OrderItem orderItem);
+    OrderItemResponseDto toResponseDto(OrderItem orderItem);
     OrderItem toEntity(OrderItemDto orderItemDto);
+    OrderItem toEntity(OrderItemResponseDto orderItemResponseDto);
 
-    List<OrderItemDto> toDtos(List<OrderItem> orderItems);
-    List<OrderItem> toEntities(List<OrderItemDto> orderItemDtos);
+    List<OrderItemResponseDto> toDtos(List<OrderItem> orderItems);
+    List<OrderItem> toEntities(List<OrderItemResponseDto> orderItemResponseDtos);
 }

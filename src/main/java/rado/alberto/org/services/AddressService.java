@@ -56,7 +56,7 @@ public class AddressService {
         }
         Address address = new  Address();
         address.setCustomer(searchCustomer.get());
-        Address newAddress = comprobationAddress(addressDto, address,addressMapper);
+        Address newAddress = verifyAddress(addressDto, address);
         return addressMapper.toDto(addressRepository.save(newAddress));
     }
 
@@ -67,7 +67,7 @@ public class AddressService {
             throw new AddressNotFoundException();
         }
         Address address = search.get();
-        Address update = comprobationAddress(addressDto, address, addressMapper);
+        Address update = verifyAddress(addressDto, address);
         return addressMapper.toDto(addressRepository.save(update));
     }
 
@@ -80,11 +80,10 @@ public class AddressService {
         addressRepository.deleteById(id);
     }
 
-    private static Address comprobationAddress(Object o, Address address, AddressMapper addressMapper) {
+    private Address verifyAddress(Object o, Address address) {
         Address addressDto;
         if (o instanceof AddressCreateDto dto) {
             addressDto = addressMapper.toEntity(dto);
-
         } else if (o instanceof AddressUpdateDto dto) {
             addressDto = addressMapper.toEntity(dto);
             addressDto.setId(address.getId());

@@ -1,5 +1,6 @@
 package rado.alberto.org.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -33,14 +34,14 @@ public class CustomerController {
     }
 
     @PostMapping("/")
-    public  ResponseEntity<CustomerResponseDto> createCustomer(@RequestBody CustomerCreateDto customerCreateDto) {
+    public  ResponseEntity<CustomerResponseDto> createCustomer(@RequestBody @Valid CustomerCreateDto customerCreateDto) {
         CustomerResponseDto result = customerService.createCustomer(customerCreateDto);
         return ResponseEntity.ok(result);
     }
 
     @PreAuthorize(("hasRole('CUSTOMER')"))
     @PutMapping("/")
-    public ResponseEntity<CustomerResponseDto> updateCustomer(@RequestBody CustomerUpdateDto customerDto) {
+    public ResponseEntity<CustomerResponseDto> updateCustomer(@RequestBody @Valid CustomerUpdateDto customerDto) {
         CustomerResponseDto result = customerService.updateCustomer(customerDto);
         return ResponseEntity.ok(result);
     }

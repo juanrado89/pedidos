@@ -12,8 +12,6 @@ import java.math.BigDecimal;
 /**
  * DTO for {@link OrderItem}
  */
-public record OrderItemDto(Long id, ProductDto product, @Min(1) int quantity,
-                           @NotNull @Digits(integer = 20, fraction = 2) BigDecimal price,
-                           @Digits(integer = 2, fraction = 2) BigDecimal discount, @NotNull Tax tax,
-                           @NotNull @Digits(integer = 20, fraction = 2) BigDecimal totalPrice) implements Serializable {
+public record OrderItemDto(Long id, ProductDto product, @Min(1) int quantity
+                           ) implements Serializable {
 }

@@ -62,7 +62,7 @@ public class ProductService {
             throw new ProductAlreadyExistException();
         }
         Product product = new Product();
-        return productMapper.toDto(productRepository.save(comprobationProduct(dto, product, productMapper)));
+        return productMapper.toDto(productRepository.save(verifyProduct(dto, product)));
     }
 
     @Transactional
@@ -72,7 +72,7 @@ public class ProductService {
             throw new ProductNotFoundException();
         }
         Product product = searchResult.get();
-        return productMapper.toDto(productRepository.save(comprobationProduct(dto, product, productMapper)));
+        return productMapper.toDto(productRepository.save(verifyProduct(dto, product)));
     }
 
     @Transactional
@@ -84,13 +84,13 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    private Product comprobationProduct(Object o, Product product, ProductMapper mapper){
+    private Product verifyProduct(Object o, Product product){
         Product productDto;
         if(o instanceof ProductDto) {
-            productDto = mapper.toEntity((ProductDto) o);
+            productDto = productMapper.toEntity((ProductDto) o);
             product.setId(productDto.getId());
         }else if(o instanceof ProductCreateDto) {
-            productDto = mapper.toEntity((ProductCreateDto) o);
+            productDto = productMapper.toEntity((ProductCreateDto) o);
         }else{
             throw new InvalidProductException();
         }

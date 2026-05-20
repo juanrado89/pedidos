@@ -10,6 +10,6 @@ import java.io.Serializable;
 /**
  * DTO for {@link Payment}
  */
-public record PaymentDto(Long id, @NotNull PaymentMethod paymentMethod,PaymentStatus paymentStatus,
-                         @NotNull OrderDto order, CustomerResponseDto customer) implements Serializable {
+public record PaymentUpdateDto(Long id, @NotNull PaymentMethod paymentMethod, @NotNull PaymentStatus paymentStatus,
+                               @NotNull OrderDto order, CustomerResponseDto customer) implements Serializable {
 }

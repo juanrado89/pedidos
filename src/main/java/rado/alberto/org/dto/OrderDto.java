@@ -20,5 +20,5 @@ public record OrderDto(Long id,
                        OrderStatus orderStatus,
                        @NotNull @Digits(integer = 20, fraction = 2) BigDecimal totalAmount,
                        @NotNull LocalDateTime orderDate,
-                       List<OrderItemDto> items) implements Serializable {
+                       List<OrderItemResponseDto> items) implements Serializable {
 }

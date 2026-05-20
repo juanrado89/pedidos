@@ -6,6 +6,7 @@ import rado.alberto.org.dto.AuthResponse;
 import rado.alberto.org.dto.LoginDto;
 import rado.alberto.org.entities.Administrator;
 import rado.alberto.org.entities.Customer;
+import rado.alberto.org.exceptions.InvalidCredentialsException;
 import rado.alberto.org.repositories.AdministratorRepository;
 import rado.alberto.org.repositories.CustomerRepository;
 
@@ -34,7 +35,7 @@ public class AuthService {
                 .map(admin -> loginAdministrator(admin, loginDto.password()))
                 .orElseGet(() -> customerRepository.findByEmail(loginDto.email())
                         .map(customer -> loginCustomer(customer, loginDto.password()))
-                        .orElseThrow(() -> new RuntimeException("Invalid credentials")));
+                        .orElseThrow(() -> new InvalidCredentialsException()));
     }
 
     private AuthResponse loginAdministrator(Administrator admin, String rawPassword) {

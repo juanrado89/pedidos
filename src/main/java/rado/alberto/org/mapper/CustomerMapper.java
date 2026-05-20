@@ -2,6 +2,7 @@ package rado.alberto.org.mapper;
 
 import org.mapstruct.Mapper;
 import rado.alberto.org.dto.CustomerCreateDto;
+import rado.alberto.org.dto.CustomerOrderResponseDto;
 import rado.alberto.org.dto.CustomerResponseDto;
 import rado.alberto.org.dto.CustomerUpdateDto;
 import rado.alberto.org.entities.Customer;
@@ -15,4 +16,6 @@ public interface CustomerMapper {
     CustomerCreateDto toDtoCreate(Customer customer);
 
     Customer toEntity(CustomerUpdateDto o);
+
+    Customer toEntity(CustomerOrderResponseDto customer);
 }
