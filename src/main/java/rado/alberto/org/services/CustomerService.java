@@ -50,7 +50,7 @@ public class CustomerService {
             throw new CustomerAlreadyExistException();
         }
         Customer customer = new Customer();
-        return customerMapper.toDtoResponse(customerRepository.save(comprobationCustomer(customerCreateDto, customer)));
+        return customerMapper.toDtoResponse(customerRepository.save(verifyCustomer(customerCreateDto, customer)));
     }
 
     @Transactional
@@ -60,7 +60,7 @@ public class CustomerService {
             throw new CustomerNotFoundException();
         }
         Customer customer = search.get();
-        return customerMapper.toDtoResponse(customerRepository.save(comprobationCustomer(customerDto, customer)));
+        return customerMapper.toDtoResponse(customerRepository.save(verifyCustomer(customerDto, customer)));
     }
 
     @Transactional
@@ -71,7 +71,7 @@ public class CustomerService {
         }
         customerRepository.deleteById(id);
     }
-    private Customer comprobationCustomer(Object o, Customer customer) {
+    private Customer verifyCustomer(Object o, Customer customer) {
         Customer customerDto;
         if (o instanceof CustomerCreateDto) {
             customerDto = customerMapper.toEntity((CustomerCreateDto) o);
