@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import rado.alberto.org.dto.OrderDto;
+import rado.alberto.org.dto.OrderStatusDto;
 import rado.alberto.org.security.AuthenticatedUser;
 import rado.alberto.org.services.OrderService;
 
@@ -49,9 +50,16 @@ public class OrderController {
         return ResponseEntity.ok(result);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/status/{id}")
+    public ResponseEntity<OrderDto> statusOrderById(@PathVariable Long id, @Valid @RequestBody OrderStatusDto orderStatus) {
+        OrderDto result = orderService.updateOrderStatus(id, orderStatus);
+        return ResponseEntity.ok(result);
+    }
+
     @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping("/")
-    public ResponseEntity<OrderDto> createOrder(@RequestBody @Valid OrderDto orderDto, @AuthenticationPrincipal AuthenticatedUser user) {
+    public ResponseEntity<OrderDto> createOrder(@Valid @RequestBody OrderDto orderDto, @AuthenticationPrincipal AuthenticatedUser user) {
         OrderDto result = orderService.createOrder(orderDto, user.id());
         return ResponseEntity.ok(result);
     }

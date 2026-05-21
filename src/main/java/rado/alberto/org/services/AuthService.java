@@ -4,8 +4,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import rado.alberto.org.dto.AuthResponse;
 import rado.alberto.org.dto.LoginDto;
+import rado.alberto.org.dto.RefreshTokenDto;
 import rado.alberto.org.entities.Administrator;
 import rado.alberto.org.entities.Customer;
+import rado.alberto.org.entities.RefreshToken;
 import rado.alberto.org.exceptions.InvalidCredentialsException;
 import rado.alberto.org.repositories.AdministratorRepository;
 import rado.alberto.org.repositories.CustomerRepository;
@@ -17,17 +19,19 @@ public class AuthService {
     private final AdministratorRepository administratorRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
     public AuthService(
             CustomerRepository customerRepository,
             AdministratorRepository administratorRepository,
             PasswordEncoder passwordEncoder,
-            JwtService jwtService
+            JwtService jwtService, RefreshTokenService refreshTokenService
     ) {
         this.customerRepository = customerRepository;
         this.administratorRepository = administratorRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.refreshTokenService = refreshTokenService;
     }
 
     public AuthResponse login(LoginDto loginDto) {
@@ -49,7 +53,13 @@ public class AuthService {
                 admin.getRole()
         );
 
-        return new AuthResponse(accessToken, null);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(
+                admin.getId(),
+                admin.getEmail(),
+                admin.getRole()
+        );
+
+        return new AuthResponse(accessToken, refreshToken.getToken());
     }
 
     private AuthResponse loginCustomer(Customer customer, String rawPassword) {
@@ -63,6 +73,28 @@ public class AuthService {
                 customer.getRole()
         );
 
-        return new AuthResponse(accessToken, null);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(
+                customer.getId(),
+                customer.getEmail(),
+                customer.getRole()
+        );
+
+        return new AuthResponse(accessToken, refreshToken.getToken());
+    }
+
+    public AuthResponse refreshToken(RefreshTokenDto dto) {
+        RefreshToken refreshToken = refreshTokenService.refresh(dto.token());
+
+        String accessToken = jwtService.generateAccessToken(
+                refreshToken.getIdUser(),
+                refreshToken.getEmail(),
+                refreshToken.getRole()
+        );
+
+        return new AuthResponse(accessToken, refreshToken.getToken());
+    }
+
+    public void logout(RefreshTokenDto dto) {
+        refreshTokenService.revoke(dto.token());
     }
 }

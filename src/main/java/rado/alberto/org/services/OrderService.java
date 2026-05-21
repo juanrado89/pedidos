@@ -4,9 +4,11 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import rado.alberto.org.dto.OrderDto;
+import rado.alberto.org.dto.OrderStatusDto;
 import rado.alberto.org.entities.Order;
 import rado.alberto.org.entities.OrderItem;
 import rado.alberto.org.exceptions.InvalidOrderException;
+import rado.alberto.org.exceptions.InvalidOrderStatusTransitionException;
 import rado.alberto.org.exceptions.OrderNotFoundException;
 import rado.alberto.org.mapper.AddressMapper;
 import rado.alberto.org.mapper.CustomerMapper;
@@ -62,8 +64,21 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderDto createOrder(@Valid OrderDto orderDto, Long id) {
-        if(!orderDto.customer().id().equals(id)){
+    public OrderDto updateOrderStatus(Long id, @Valid OrderStatusDto orderStatus) {
+        Optional<Order> search = orderRepository.findById(id);
+        if (search.isEmpty()) {
+            throw new OrderNotFoundException();
+        }
+        if(search.get().getOrderStatus() == OrderStatus.CANCELADO || search.get().getOrderStatus() == OrderStatus.ENVIADO) {
+            throw new InvalidOrderStatusTransitionException();
+        }
+        search.get().setOrderStatus(orderStatus.orderStatus());
+        return orderMapper.toDto(orderRepository.save(search.get()));
+    }
+
+    @Transactional
+    public OrderDto createOrder(@Valid OrderDto orderDto, Long idCustomer) {
+        if(!orderDto.customer().id().equals(idCustomer)){
             throw new InvalidOrderException();
         }
         Order order = new Order();
@@ -123,6 +138,5 @@ public class OrderService {
         }
         return order;
     }
-
 
 }

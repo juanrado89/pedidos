@@ -4,9 +4,11 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import rado.alberto.org.dto.PaymentDto;
+import rado.alberto.org.dto.PaymentStatusDto;
 import rado.alberto.org.dto.PaymentUpdateDto;
 import rado.alberto.org.entities.Payment;
 import rado.alberto.org.exceptions.InvalidPaymentException;
+import rado.alberto.org.exceptions.InvalidPaymentStatusTransitionException;
 import rado.alberto.org.exceptions.PaymentNotFoundException;
 import rado.alberto.org.mapper.PaymentMapper;
 import rado.alberto.org.repositories.PaymentRepository;
@@ -69,6 +71,19 @@ public class PaymentService {
     }
 
     @Transactional
+    public PaymentUpdateDto updatePaymentStatus(Long idPayment, @Valid PaymentStatusDto paymentDto) {
+        Optional<Payment> search = paymentRepository.findById(idPayment);
+        if(search.isEmpty()) {
+            throw new PaymentNotFoundException();
+        }
+        if(search.get().getPaymentStatus() == PaymentStatus.CANCELED || search.get().getPaymentStatus() == PaymentStatus.PAID) {
+            throw new InvalidPaymentStatusTransitionException();
+        }
+        search.get().setPaymentStatus(paymentDto.paymentStatus());
+        return paymentMapper.toUpdateDto(paymentRepository.save(search.get()));
+    }
+
+    @Transactional
     public void deletePayment(Long id) {
         Optional<Payment> search = paymentRepository.findById(id);
         if(search.isEmpty()) {
@@ -99,4 +114,5 @@ public class PaymentService {
         }
         return payment;
     }
+
 }

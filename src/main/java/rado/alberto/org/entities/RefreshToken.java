@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import rado.alberto.org.variables.Role;
 
 import java.time.LocalDateTime;
 
@@ -20,24 +21,30 @@ public class RefreshToken {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 512)
+    @Column(name = "token", nullable = false, unique = true, length = 512)
     private String token;
 
-    @Column(nullable = false)
+    @Column(name = "email", nullable = false)
+    private String email;
+
+    @Column(name = "role", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @Column(name = "expires_at", nullable = false)
     private LocalDateTime expiresAt;
 
-    @Column(nullable = false)
+    @Column(name = "revoked", nullable = false)
     private boolean revoked;
 
-    @Column(nullable = false)
+    @Column(name = "expired", nullable = false)
     private boolean expired;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", nullable = false)
-    private Customer customer;
+    @Column(name = "user_id", nullable = false)
+    private Long idUser;
 
     @Override
     public int hashCode() {
