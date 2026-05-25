@@ -10,6 +10,8 @@ import rado.alberto.org.entities.OrderItem;
 import rado.alberto.org.exceptions.InvalidOrderException;
 import rado.alberto.org.exceptions.InvalidOrderStatusTransitionException;
 import rado.alberto.org.exceptions.OrderNotFoundException;
+import rado.alberto.org.kafka.events.OrderCreatedEvent;
+import rado.alberto.org.kafka.producers.OrderEventProducer;
 import rado.alberto.org.mapper.AddressMapper;
 import rado.alberto.org.mapper.CustomerMapper;
 import rado.alberto.org.mapper.OrderItemMapper;
@@ -30,13 +32,15 @@ public class OrderService {
     private final CustomerMapper customerMapper;
     private final AddressMapper addressMapper;
     private final OrderItemMapper orderItemMapper;
+    private final OrderEventProducer orderEventProducer;
 
-    public OrderService(OrderRepository orderRepository, OrderMapper orderMapper, CustomerMapper customerMapper, AddressMapper addressMapper, OrderItemMapper orderItemMapper) {
+    public OrderService(OrderRepository orderRepository, OrderMapper orderMapper, CustomerMapper customerMapper, AddressMapper addressMapper, OrderItemMapper orderItemMapper, OrderEventProducer orderEventProducer) {
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
         this.customerMapper = customerMapper;
         this.addressMapper = addressMapper;
         this.orderItemMapper = orderItemMapper;
+        this.orderEventProducer = orderEventProducer;
     }
 
 
@@ -82,7 +86,16 @@ public class OrderService {
             throw new InvalidOrderException();
         }
         Order order = new Order();
-        return orderMapper.toDto(orderRepository.save(verifyOrder(order, orderDto, true)));
+        Order resultOrder = orderRepository.save(verifyOrder(order, orderDto, true));
+
+        orderEventProducer.publishOrderCreated(new OrderCreatedEvent(
+                resultOrder.getId(),
+                resultOrder.getCustomer().getId(),
+                resultOrder.getTotalAmount(),
+                resultOrder.getOrderDate()
+        ));
+
+        return orderMapper.toDto(resultOrder);
     }
 
     @Transactional
