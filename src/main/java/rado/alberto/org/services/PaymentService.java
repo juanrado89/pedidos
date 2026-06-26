@@ -6,12 +6,16 @@ import org.springframework.stereotype.Service;
 import rado.alberto.org.dto.PaymentDto;
 import rado.alberto.org.dto.PaymentStatusDto;
 import rado.alberto.org.dto.PaymentUpdateDto;
+import rado.alberto.org.entities.Order;
+import rado.alberto.org.entities.OrderItem;
 import rado.alberto.org.entities.Payment;
+import rado.alberto.org.entities.Product;
 import rado.alberto.org.exceptions.InvalidPaymentException;
 import rado.alberto.org.exceptions.InvalidPaymentStatusTransitionException;
 import rado.alberto.org.exceptions.PaymentNotFoundException;
 import rado.alberto.org.mapper.PaymentMapper;
 import rado.alberto.org.repositories.PaymentRepository;
+import rado.alberto.org.variables.OrderStatus;
 import rado.alberto.org.variables.PaymentStatus;
 
 import java.util.List;
@@ -78,6 +82,22 @@ public class PaymentService {
         }
         if(search.get().getPaymentStatus() == PaymentStatus.CANCELED || search.get().getPaymentStatus() == PaymentStatus.PAID) {
             throw new InvalidPaymentStatusTransitionException();
+        }
+
+        if (paymentDto.paymentStatus() == PaymentStatus.PAID) {
+
+            Order order = search.get().getOrder();
+
+            for (OrderItem item : order.getItems()) {
+
+                Product product = item.getProduct();
+
+                product.setStock(
+                        product.getStock() - item.getQuantity()
+                );
+            }
+
+            order.setOrderStatus(OrderStatus.EN_PROCESO);
         }
         search.get().setPaymentStatus(paymentDto.paymentStatus());
         return paymentMapper.toUpdateDto(paymentRepository.save(search.get()));
